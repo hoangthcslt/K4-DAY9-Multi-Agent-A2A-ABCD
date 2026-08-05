@@ -1,20 +1,16 @@
 {
   "case_id": "EC_009",
   "case_assessment": {
-    "primary_issue": "late_delivery_seller",
+    "primary_issue": "canceled_order_paid",
     "secondary_issues": [
-      "multi_item_order",
-      "multi_seller_order",
-      "split_payment",
-      "repeat_customer",
-      "multiple_categories"
+      "multi_item_order"
     ],
     "case_status": "action_required",
-    "confidence": 0.8
+    "confidence": 0.9
   },
   "affected_entities": {
     "order_ids": [
-      "EC_009"
+      "6683aa4f73f7869ec65ebeeef53f700b"
     ],
     "item_ids": [
       "6683aa4f73f7869ec65ebeeef53f700b:1",
@@ -83,10 +79,10 @@
   },
   "payment_reconciliation": {
     "currency": "BRL",
-    "item_total_brl": 389.9,
-    "freight_total_brl": 229.6,
-    "expected_total_brl": 1443.0,
-    "payment_total_brl": 1443.0,
+    "item_total_brl": 89.5,
+    "freight_total_brl": 54.8,
+    "expected_total_brl": 144.3,
+    "payment_total_brl": 144.3,
     "difference_brl": 0.0,
     "reconciled": true,
     "payment_types": [
@@ -96,38 +92,33 @@
   "root_cause_analysis": {
     "ranked_causes": [
       {
-        "cause_code": "late_delivery_seller",
+        "cause_code": "ORDER_CANCELED_AFTER_PAYMENT",
         "rank": 1
-      },
-      {
-        "cause_code": "seller_handoff_analysis",
-        "rank": 2
       }
     ],
     "responsible_parties": [
       {
-        "party_type": "seller",
-        "party_id": "4e8dacf3d38f281ae26c3e0321d92d88"
+        "party_type": "platform",
+        "party_id": "OLIST_PLATFORM"
       }
     ]
   },
   "evidence_ids": [
-    "order:EC_009",
+    "order:6683aa4f73f7869ec65ebeeef53f700b",
     "item:6683aa4f73f7869ec65ebeeef53f700b:1",
     "item:6683aa4f73f7869ec65ebeeef53f700b:2",
     "item:6683aa4f73f7869ec65ebeeef53f700b:3",
     "item:6683aa4f73f7869ec65ebeeef53f700b:4",
     "item:6683aa4f73f7869ec65ebeeef53f700b:5",
     "payment:6683aa4f73f7869ec65ebeeef53f700b:1",
-    "seller:4e8dacf3d38f281ae26c3e0321d92d88",
-    "policy:late_delivery_seller",
-    "policy:seller_handoff_analysis"
+    "policy:ORDER_CANCELED_AFTER_PAYMENT"
   ],
   "financial_resolution": {
     "currency": "BRL",
-    "recommended_refund_brl": 229.6
+    "recommended_refund_brl": 144.3
   },
   "resolution_actions": [
-    "refund_freight"
+    "issue_full_refund",
+    "verify_refund_completion"
   ]
 }

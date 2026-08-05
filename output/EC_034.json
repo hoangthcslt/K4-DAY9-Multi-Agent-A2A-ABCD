@@ -1,14 +1,16 @@
 {
   "case_id": "EC_034",
   "case_assessment": {
-    "primary_issue": "unsupported_late_claim",
-    "secondary_issues": [],
-    "case_status": "no_action",
-    "confidence": 1.0
+    "primary_issue": "unavailable_order_paid",
+    "secondary_issues": [
+      "repeat_customer"
+    ],
+    "case_status": "action_required",
+    "confidence": 0.9
   },
   "affected_entities": {
     "order_ids": [
-      "EC_034"
+      "b210c676cae65f95f7e08a49d195e1a1"
     ],
     "item_ids": [],
     "seller_ids": [],
@@ -36,27 +38,41 @@
   },
   "payment_reconciliation": {
     "currency": "BRL",
-    "item_total_brl": 0.0,
-    "freight_total_brl": 0.0,
-    "expected_total_brl": 0.0,
-    "payment_total_brl": 0.0,
-    "difference_brl": 0.0,
-    "reconciled": false,
+    "item_total_brl": null,
+    "freight_total_brl": null,
+    "expected_total_brl": null,
+    "payment_total_brl": 85.14,
+    "difference_brl": null,
+    "reconciled": null,
     "payment_types": [
       "credit_card"
     ]
   },
   "root_cause_analysis": {
-    "ranked_causes": [],
-    "responsible_parties": []
+    "ranked_causes": [
+      {
+        "cause_code": "ORDER_UNAVAILABLE_AFTER_PAYMENT",
+        "rank": 1
+      }
+    ],
+    "responsible_parties": [
+      {
+        "party_type": "platform",
+        "party_id": "OLIST_PLATFORM"
+      }
+    ]
   },
   "evidence_ids": [
-    "order:EC_034",
-    "payment:b210c676cae65f95f7e08a49d195e1a1:1"
+    "order:b210c676cae65f95f7e08a49d195e1a1",
+    "payment:b210c676cae65f95f7e08a49d195e1a1:1",
+    "policy:ORDER_UNAVAILABLE_AFTER_PAYMENT"
   ],
   "financial_resolution": {
     "currency": "BRL",
-    "recommended_refund_brl": 0.0
+    "recommended_refund_brl": 85.14
   },
-  "resolution_actions": []
+  "resolution_actions": [
+    "issue_full_refund",
+    "verify_refund_completion"
+  ]
 }

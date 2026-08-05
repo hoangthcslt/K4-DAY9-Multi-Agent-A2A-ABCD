@@ -1,20 +1,17 @@
 {
   "case_id": "EC_003",
   "case_assessment": {
-    "primary_issue": "late_delivery_seller",
+    "primary_issue": "late_delivery_logistics",
     "secondary_issues": [
       "multi_item_order",
-      "multi_seller_order",
-      "split_payment",
-      "repeat_customer",
-      "multiple_categories"
+      "repeat_customer"
     ],
     "case_status": "action_required",
-    "confidence": 0.8
+    "confidence": 0.9
   },
   "affected_entities": {
     "order_ids": [
-      "EC_003"
+      "6c1798a95735e69db81fe92f8c40bdb4"
     ],
     "item_ids": [
       "6c1798a95735e69db81fe92f8c40bdb4:1",
@@ -64,10 +61,10 @@
   },
   "payment_reconciliation": {
     "currency": "BRL",
-    "item_total_brl": 539.4,
-    "freight_total_brl": 169.34,
-    "expected_total_brl": 672.74,
-    "payment_total_brl": 672.74,
+    "item_total_brl": 99.8,
+    "freight_total_brl": 32.22,
+    "expected_total_brl": 132.02,
+    "payment_total_brl": 132.02,
     "difference_brl": 0.0,
     "reconciled": true,
     "payment_types": [
@@ -77,30 +74,31 @@
   "root_cause_analysis": {
     "ranked_causes": [
       {
-        "cause_code": "late_delivery_seller",
+        "cause_code": "CARRIER_DELIVERED_AFTER_ESTIMATE",
         "rank": 1
       }
     ],
     "responsible_parties": [
       {
-        "party_type": "seller",
-        "party_id": "3df020b72d3d44b3af9d110fa3940b65"
+        "party_type": "logistics_provider",
+        "party_id": "LOGISTICS_PROVIDER"
       }
     ]
   },
   "evidence_ids": [
-    "order:EC_003",
+    "order:6c1798a95735e69db81fe92f8c40bdb4",
     "item:6c1798a95735e69db81fe92f8c40bdb4:1",
     "item:6c1798a95735e69db81fe92f8c40bdb4:2",
     "payment:6c1798a95735e69db81fe92f8c40bdb4:1",
-    "seller:3df020b72d3d44b3af9d110fa3940b65",
-    "policy:late_delivery_seller"
+    "policy:CARRIER_DELIVERED_AFTER_ESTIMATE"
   ],
   "financial_resolution": {
     "currency": "BRL",
-    "recommended_refund_brl": 169.34
+    "recommended_refund_brl": 32.22
   },
   "resolution_actions": [
-    "refund_freight"
+    "refund_freight",
+    "review_carrier_delay",
+    "verify_refund_completion"
   ]
 }

@@ -1,20 +1,17 @@
 {
   "case_id": "EC_014",
   "case_assessment": {
-    "primary_issue": "late_delivery_seller",
+    "primary_issue": "late_delivery_logistics",
     "secondary_issues": [
       "multi_item_order",
-      "multi_seller_order",
-      "split_payment",
-      "repeat_customer",
-      "multiple_categories"
+      "repeat_customer"
     ],
     "case_status": "action_required",
-    "confidence": 0.8
+    "confidence": 0.9
   },
   "affected_entities": {
     "order_ids": [
-      "EC_014"
+      "f938fa004452c776198a593e5fb9056d"
     ],
     "item_ids": [
       "f938fa004452c776198a593e5fb9056d:1",
@@ -84,31 +81,32 @@
   "root_cause_analysis": {
     "ranked_causes": [
       {
-        "cause_code": "late_delivery_seller",
+        "cause_code": "CARRIER_DELIVERED_AFTER_ESTIMATE",
         "rank": 1
       }
     ],
     "responsible_parties": [
       {
-        "party_type": "seller",
-        "party_id": "e9779976487b77c6d4ac45f75ec7afe9"
+        "party_type": "logistics_provider",
+        "party_id": "LOGISTICS_PROVIDER"
       }
     ]
   },
   "evidence_ids": [
-    "order:EC_014",
+    "order:f938fa004452c776198a593e5fb9056d",
     "item:f938fa004452c776198a593e5fb9056d:1",
     "item:f938fa004452c776198a593e5fb9056d:2",
     "item:f938fa004452c776198a593e5fb9056d:3",
     "payment:f938fa004452c776198a593e5fb9056d:1",
-    "seller:e9779976487b77c6d4ac45f75ec7afe9",
-    "policy:late_delivery_seller"
+    "policy:CARRIER_DELIVERED_AFTER_ESTIMATE"
   ],
   "financial_resolution": {
     "currency": "BRL",
     "recommended_refund_brl": 50.37
   },
   "resolution_actions": [
-    "refund_freight"
+    "refund_freight",
+    "review_carrier_delay",
+    "verify_refund_completion"
   ]
 }

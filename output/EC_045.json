@@ -1,20 +1,18 @@
 {
   "case_id": "EC_045",
   "case_assessment": {
-    "primary_issue": "late_delivery_seller",
+    "primary_issue": "unsupported_late_claim",
     "secondary_issues": [
       "multi_item_order",
       "multi_seller_order",
-      "split_payment",
-      "repeat_customer",
       "multiple_categories"
     ],
-    "case_status": "action_required",
-    "confidence": 0.8
+    "case_status": "no_action",
+    "confidence": 0.9
   },
   "affected_entities": {
     "order_ids": [
-      "EC_045"
+      "fe64170e936bc5f6a6a41def260984b9"
     ],
     "item_ids": [
       "fe64170e936bc5f6a6a41def260984b9:1",
@@ -65,10 +63,10 @@
   },
   "payment_reconciliation": {
     "currency": "BRL",
-    "item_total_brl": 999.9,
-    "freight_total_brl": 169.9,
-    "expected_total_brl": 1169.8,
-    "payment_total_brl": 1169.8,
+    "item_total_brl": 199.8,
+    "freight_total_brl": 33.56,
+    "expected_total_brl": 233.36,
+    "payment_total_brl": 233.36,
     "difference_brl": 0.0,
     "reconciled": true,
     "payment_types": [
@@ -78,35 +76,25 @@
   "root_cause_analysis": {
     "ranked_causes": [
       {
-        "cause_code": "late_delivery_seller",
+        "cause_code": "DELIVERY_WITHIN_ESTIMATE",
         "rank": 1
       }
     ],
-    "responsible_parties": [
-      {
-        "party_type": "seller",
-        "party_id": "da8622b14eb17ae2831f4ac5b9dab84a"
-      },
-      {
-        "party_type": "seller",
-        "party_id": "0241d4d5d36f10f80c644447315af0bd"
-      }
-    ]
+    "responsible_parties": []
   },
   "evidence_ids": [
-    "order:EC_045",
+    "order:fe64170e936bc5f6a6a41def260984b9",
     "item:fe64170e936bc5f6a6a41def260984b9:1",
     "item:fe64170e936bc5f6a6a41def260984b9:2",
     "payment:fe64170e936bc5f6a6a41def260984b9:1",
-    "seller:da8622b14eb17ae2831f4ac5b9dab84a",
-    "seller:0241d4d5d36f10f80c644447315af0bd",
-    "policy:late_delivery_seller"
+    "policy:DELIVERY_WITHIN_ESTIMATE"
   ],
   "financial_resolution": {
     "currency": "BRL",
-    "recommended_refund_brl": 169.9
+    "recommended_refund_brl": 0.0
   },
   "resolution_actions": [
-    "refund_freight"
+    "reject_late_refund",
+    "coordinate_multi_seller_case"
   ]
 }

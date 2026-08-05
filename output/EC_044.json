@@ -1,20 +1,17 @@
 {
   "case_id": "EC_044",
   "case_assessment": {
-    "primary_issue": "late_delivery_seller",
+    "primary_issue": "unsupported_late_claim",
     "secondary_issues": [
       "multi_item_order",
-      "multi_seller_order",
-      "split_payment",
-      "repeat_customer",
-      "multiple_categories"
+      "multi_seller_order"
     ],
-    "case_status": "action_required",
-    "confidence": 0.8
+    "case_status": "no_action",
+    "confidence": 0.9
   },
   "affected_entities": {
     "order_ids": [
-      "EC_044"
+      "a833e4af2b4c893929b9f3adce3ecbeb"
     ],
     "item_ids": [
       "a833e4af2b4c893929b9f3adce3ecbeb:1",
@@ -38,7 +35,6 @@
       "817e1c2d22418c36386406ccacfa53e8"
     ],
     "category_names": [
-      "furniture_decor",
       "furniture_decor"
     ]
   },
@@ -65,10 +61,10 @@
   },
   "payment_reconciliation": {
     "currency": "BRL",
-    "item_total_brl": 1089.0,
-    "freight_total_brl": 327.27,
-    "expected_total_brl": 1416.27,
-    "payment_total_brl": 1416.27,
+    "item_total_brl": 198.0,
+    "freight_total_brl": 63.27,
+    "expected_total_brl": 261.27,
+    "payment_total_brl": 261.27,
     "difference_brl": 0.0,
     "reconciled": true,
     "payment_types": [
@@ -78,36 +74,25 @@
   "root_cause_analysis": {
     "ranked_causes": [
       {
-        "cause_code": "late_delivery_seller",
+        "cause_code": "DELIVERY_WITHIN_ESTIMATE",
         "rank": 1
-      },
-      {
-        "cause_code": "seller_handoff_late",
-        "rank": 2
       }
     ],
-    "responsible_parties": [
-      {
-        "party_type": "seller",
-        "party_id": "2b3b9ce054da76a7428df143a567b156"
-      }
-    ]
+    "responsible_parties": []
   },
   "evidence_ids": [
-    "order:EC_044",
+    "order:a833e4af2b4c893929b9f3adce3ecbeb",
     "item:a833e4af2b4c893929b9f3adce3ecbeb:1",
     "item:a833e4af2b4c893929b9f3adce3ecbeb:2",
     "payment:a833e4af2b4c893929b9f3adce3ecbeb:1",
-    "seller:2b3b9ce054da76a7428df143a567b156",
-    "seller:624f4ece8da4aafb77699233d480f8ef",
-    "policy:late_delivery_seller",
-    "policy:seller_handoff_late"
+    "policy:DELIVERY_WITHIN_ESTIMATE"
   ],
   "financial_resolution": {
     "currency": "BRL",
-    "recommended_refund_brl": 327.27
+    "recommended_refund_brl": 0.0
   },
   "resolution_actions": [
-    "refund_freight"
+    "reject_late_refund",
+    "coordinate_multi_seller_case"
   ]
 }

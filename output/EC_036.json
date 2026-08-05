@@ -5,16 +5,14 @@
     "secondary_issues": [
       "multi_item_order",
       "multi_seller_order",
-      "split_payment",
-      "repeat_customer",
-      "multiple_categories"
+      "split_payment"
     ],
     "case_status": "no_action",
-    "confidence": 1.0
+    "confidence": 0.9
   },
   "affected_entities": {
     "order_ids": [
-      "EC_036"
+      "201797d3f567dc70cc5732ecf055e346"
     ],
     "item_ids": [
       "201797d3f567dc70cc5732ecf055e346:1",
@@ -39,7 +37,6 @@
       "188d0b148e6d1c86faffe0d73c3f2dad"
     ],
     "category_names": [
-      "furniture_decor",
       "furniture_decor"
     ]
   },
@@ -78,17 +75,21 @@
     ]
   },
   "root_cause_analysis": {
-    "ranked_causes": [],
+    "ranked_causes": [
+      {
+        "cause_code": "MULTIPLE_PAYMENTS_RECONCILED",
+        "rank": 1
+      }
+    ],
     "responsible_parties": []
   },
   "evidence_ids": [
-    "order:EC_036",
+    "order:201797d3f567dc70cc5732ecf055e346",
     "item:201797d3f567dc70cc5732ecf055e346:1",
     "item:201797d3f567dc70cc5732ecf055e346:2",
     "payment:201797d3f567dc70cc5732ecf055e346:2",
     "payment:201797d3f567dc70cc5732ecf055e346:1",
-    "seller:95f83f51203c626648c875dd41874c7f",
-    "seller:23613d49c3ac2bd302259e55c06c050c"
+    "policy:MULTIPLE_PAYMENTS_RECONCILED"
   ],
   "financial_resolution": {
     "currency": "BRL",
