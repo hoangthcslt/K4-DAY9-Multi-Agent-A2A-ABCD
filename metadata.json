@@ -1,0 +1,75 @@
+{
+  "system": "Multi-Agent E-commerce Dispute Resolution",
+  "policy_version": "EC_POLICY_V2",
+  "model": {
+    "name": "llama-3.1-8b-instant",
+    "parameter_size": "8B",
+    "parameter_count_billions": 8,
+    "under_10b_limit": true,
+    "provider": "groq",
+    "endpoint": "https://api.groq.com/openai/v1/chat/completions",
+    "declared_in_source": "src/llm_client.py (MODEL_NAME)"
+  },
+  "inference_parameters": {
+    "temperature": 0.0,
+    "max_tokens": 700,
+    "response_format": "json_object"
+  },
+  "framework": {
+    "orchestration": "custom Python multi-agent orchestration (no agent framework)",
+    "language": "Python",
+    "dependencies": ["requests", "python-dotenv"],
+    "data_access": "Python csv stdlib, in-memory indexed joins"
+  },
+  "runtime": {
+    "os": "Windows 11",
+    "python_version": "3.14.5",
+    "entrypoint": "python src/run.py",
+    "trace_file": "trace.jsonl",
+    "output_dir": "output/"
+  },
+  "agents": [
+    {
+      "name": "coordinator",
+      "role": "Case intake, work dispatch, output assembly",
+      "uses_llm": true,
+      "model": "llama-3.1-8b-instant"
+    },
+    {
+      "name": "customer_agent",
+      "role": "Customer identity and purchase history",
+      "uses_llm": true,
+      "model": "llama-3.1-8b-instant"
+    },
+    {
+      "name": "order_product_agent",
+      "role": "Order composition, items, sellers, products, categories",
+      "uses_llm": true,
+      "model": "llama-3.1-8b-instant"
+    },
+    {
+      "name": "payment_agent",
+      "role": "Payment reconciliation against item + freight totals",
+      "uses_llm": true,
+      "model": "llama-3.1-8b-instant"
+    },
+    {
+      "name": "delivery_agent",
+      "role": "Delivery variance and seller handoff lateness attribution",
+      "uses_llm": true,
+      "model": "llama-3.1-8b-instant"
+    },
+    {
+      "name": "policy_agent",
+      "role": "EC_POLICY_V2 classification, cross-checked against the rules engine",
+      "uses_llm": true,
+      "model": "llama-3.1-8b-instant"
+    },
+    {
+      "name": "verifier_agent",
+      "role": "Schema, evidence, array-limit and null-handling gate",
+      "uses_llm": false,
+      "model": "rule-based (no LLM)"
+    }
+  ]
+}
