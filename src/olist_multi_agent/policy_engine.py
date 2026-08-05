@@ -33,34 +33,53 @@ def _confidence(
     *,
     matched_cleanly: bool,
     primary: str,
+    order: dict[str, Any],
     delivery: dict[str, Any],
     payment: dict[str, Any],
     handoffs: dict[str, AgentHandoff],
 ) -> float:
     """Calibrate confidence from real uncertainty signals instead of a fixed value.
 
-    A rule that only ever reports 1.0 is indistinguishable from a model that
-    never checks its own inputs. This lowers confidence when the case fell
-    through to the unmatched fallback, when the decisive variance sits close
-    to its threshold, when timestamps needed for the decision are missing, or
-    when an upstream agent already raised a warning.
+    Penalties scale with how close the deciding number sits to its own
+    threshold (a 90-hour-late delivery is a safer call than a 1-hour-late
+    one) rather than a single step-down, so cases spread out instead of
+    clustering on one value. Also lowers confidence when the case fell
+    through to the unmatched fallback, when timestamps needed for the
+    decision are missing, when an order has no item rows to corroborate
+    against, or when an upstream agent already raised a warning.
     """
-    score = 0.97
+    score = 0.99
 
     if not matched_cleanly:
         score -= 0.35
 
-    if primary in ("late_delivery_seller", "late_delivery_logistics"):
+    if primary in ("late_delivery_seller", "late_delivery_logistics", "unsupported_late_claim"):
         variance = delivery.get("delivery_variance_hours")
-        if variance is None or abs(float(variance)) < 2.0:
-            score -= 0.10
+        if variance is None:
+            score -= 0.15
+        else:
+            margin = min(abs(float(variance)), 24.0)
+            score -= (24.0 - margin) / 24.0 * 0.12
         if delivery.get("delivered_at") is None or delivery.get("carrier_handoff_at") is None:
-            score -= 0.10
+            score -= 0.08
+
+    if primary == "late_delivery_seller":
+        handoff_margins = [
+            abs(float(row["handoff_variance_hours"]))
+            for row in delivery.get("seller_handoff_analysis") or []
+            if row.get("late_handoff") and row.get("handoff_variance_hours") is not None
+        ]
+        if handoff_margins:
+            margin = min(min(handoff_margins), 24.0)
+            score -= (24.0 - margin) / 24.0 * 0.08
 
     if primary in ("valid_split_payment", "unsupported_late_claim"):
         difference = payment.get("difference_brl")
-        if difference is not None and 0.05 <= abs(float(difference)) <= 0.10:
-            score -= 0.08
+        if difference is not None:
+            score -= min(abs(float(difference)), 0.10) / 0.10 * 0.08
+
+    if not (order.get("item_count") or 0):
+        score -= 0.05
 
     for handoff in handoffs.values():
         if handoff.warnings:
@@ -164,6 +183,7 @@ def resolve_policy(handoffs: dict[str, AgentHandoff]) -> PolicyDecision:
     confidence = _confidence(
         matched_cleanly=matched_cleanly,
         primary=primary,
+        order=order,
         delivery=delivery,
         payment=payment,
         handoffs=handoffs,
