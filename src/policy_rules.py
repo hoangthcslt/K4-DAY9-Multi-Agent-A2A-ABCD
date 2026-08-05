@@ -69,20 +69,24 @@ def analyze_delivery(bundle):
     carrier_dt = _parse(carrier_at)
     seller_handoff_analysis = []
     late_handoff_seller_ids = []
-    for seller_id in bundle["seller_ids"]:
-        shipping_limit_at = earliest_limit_by_seller.get(seller_id)
-        handoff_variance_hours = _hours_between(carrier_dt, _parse(shipping_limit_at))
-        late_handoff = handoff_variance_hours is not None and handoff_variance_hours > 0
-        seller_handoff_analysis.append(
-            {
-                "seller_id": seller_id,
-                "shipping_limit_at": shipping_limit_at,
-                "handoff_variance_hours": handoff_variance_hours,
-                "late_handoff": late_handoff,
-            }
-        )
-        if late_handoff:
-            late_handoff_seller_ids.append(seller_id)
+    if carrier_dt is not None:
+        # handoff_variance_hours needs order_delivered_carrier_date; with no
+        # carrier handoff yet (e.g. a canceled order) there is nothing to
+        # report, so the array stays empty rather than holding null variances.
+        for seller_id in bundle["seller_ids"]:
+            shipping_limit_at = earliest_limit_by_seller.get(seller_id)
+            handoff_variance_hours = _hours_between(carrier_dt, _parse(shipping_limit_at))
+            late_handoff = handoff_variance_hours is not None and handoff_variance_hours > 0
+            seller_handoff_analysis.append(
+                {
+                    "seller_id": seller_id,
+                    "shipping_limit_at": shipping_limit_at,
+                    "handoff_variance_hours": handoff_variance_hours,
+                    "late_handoff": late_handoff,
+                }
+            )
+            if late_handoff:
+                late_handoff_seller_ids.append(seller_id)
 
     return {
         "delivered_at": delivered_at,
