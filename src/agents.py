@@ -132,10 +132,13 @@ class OrderProductAgent:
                 "seller_ids": [], "item_ids": []
             }
 
+        # Sort by order_item_id for stable ordering
+        sorted_items = sorted(raw_items, key=lambda x: int(x.get("order_item_id", 0) or 0))
+
         seen_products, seen_categories, seen_sellers = [], [], []
         item_ids = []
 
-        for item in raw_items:
+        for item in sorted_items:
             pid = str(item.get("product_id") or "")
             cat = str(item.get("product_category_name_english") or "")
             sid = str(item.get("seller_id") or "")
@@ -160,14 +163,17 @@ class OrderProductAgent:
 
 class PaymentAgent:
     def analyze(self, order_id: str, raw_items: List[Dict], raw_payments: List[Dict]) -> Dict[str, Any]:
+        # Sort by payment_sequential for stable ordering
+        sorted_payments = sorted(raw_payments, key=lambda x: int(x.get("payment_sequential", 0) or 0))
         payment_ids = [
             f"{order_id}:{int(p['payment_sequential'])}"
-            for p in raw_payments
+            for p in sorted_payments
             if p.get("payment_sequential") is not None
         ][:5]
         payment_types = list(dict.fromkeys(
-            p["payment_type"] for p in raw_payments if p.get("payment_type")
+            p["payment_type"] for p in sorted_payments if p.get("payment_type")
         ))
+        raw_payments = sorted_payments  # use sorted from here on
         payment_total = _round2(sum(p["payment_value"] for p in raw_payments if p.get("payment_value") is not None))
 
         if not raw_items:
@@ -345,13 +351,14 @@ class PolicyAgent:
         if len(unique_categories) >= 2:
             secondary_issues.append("multiple_categories")
 
-        # ---- Resolution actions in fixed order ----
+        # ---- Resolution actions in fixed order (per README section 4) ----
         resolution_actions = [action]
-        if primary_issue in ("late_delivery_seller",):
+        if primary_issue == "late_delivery_seller":
             resolution_actions.append("review_seller_handoff")
         elif primary_issue == "late_delivery_logistics":
             resolution_actions.append("review_carrier_delay")
-        if action in ("issue_full_refund", "refund_freight"):
+        # verify_refund_completion: only for full platform refunds (canceled/unavailable)
+        if action == "issue_full_refund":
             resolution_actions.append("verify_refund_completion")
         if len(unique_sellers) >= 2 and primary_issue not in ("valid_split_payment",):
             resolution_actions.append("coordinate_multi_seller_case")
