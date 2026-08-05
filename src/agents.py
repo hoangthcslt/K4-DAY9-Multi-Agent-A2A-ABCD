@@ -6,10 +6,10 @@ LLM (Groq llama-3.1-8b-instant) is used only for the Customer Agent's context su
 
 import os
 import json
+import requests
 from datetime import datetime
 from typing import List, Optional, Dict, Any
 
-from groq import Groq
 from pydantic import BaseModel, Field
 
 # ----------------- PYDANTIC OUTPUT SCHEMA -----------------
@@ -264,8 +264,8 @@ class PolicyAgent:
     computed here in Python from verified data.
     """
     def __init__(self):
-        self.client = Groq(api_key=os.getenv("GROQ_API_KEY"))
-        self.model = "llama-3.1-8b-instant"
+        self.api_key = os.getenv("OPENROUTER_API_KEY")
+        self.model = "google/gemma-2-9b-it"
 
     def determine_resolution(
         self,
@@ -388,6 +388,9 @@ class PolicyAgent:
 
     def _get_confidence(self, primary_issue, delivery_var, late_sellers, reconciled, order_status) -> float:
         """Use LLM to estimate confidence score based on evidence clarity."""
+        if not self.api_key:
+            return 0.9
+            
         prompt = """You are a quality assurance agent. Given the policy decision summary, return a JSON object with a single key 'confidence' (float between 0.7 and 1.0) representing how confident you are in this determination. Output only valid JSON."""
         user_msg = json.dumps({
             "primary_issue": primary_issue,
@@ -397,16 +400,24 @@ class PolicyAgent:
             "order_status": order_status
         })
         try:
-            resp = self.client.chat.completions.create(
-                messages=[
-                    {"role": "system", "content": prompt},
-                    {"role": "user", "content": user_msg}
-                ],
-                model=self.model,
-                response_format={"type": "json_object"},
-                temperature=0.0
+            resp = requests.post(
+                "https://openrouter.ai/api/v1/chat/completions",
+                headers={
+                    "Authorization": f"Bearer {self.api_key}",
+                    "Content-Type": "application/json"
+                },
+                json={
+                    "model": self.model,
+                    "messages": [
+                        {"role": "system", "content": prompt},
+                        {"role": "user", "content": user_msg}
+                    ],
+                    "response_format": {"type": "json_object"},
+                    "temperature": 0.0
+                },
+                timeout=10
             )
-            data = json.loads(resp.choices[0].message.content)
+            data = json.loads(resp.json()["choices"][0]["message"]["content"])
             c = float(data.get("confidence", 0.9))
             return round(max(0.0, min(1.0, c)), 2)
         except Exception:
