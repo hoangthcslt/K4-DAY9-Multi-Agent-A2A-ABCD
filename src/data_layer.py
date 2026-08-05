@@ -113,11 +113,6 @@ def get_case_bundle(data, order_id):
     for row in data.items_by_order.get(order_id, []):
         product = data.products_by_id.get(row["product_id"])
         category = product["product_category_name"] if product else ""
-        # The dataset ships a translation table for these Portuguese category
-        # names, so report the English form and fall back to the original when
-        # a category has no translation row.
-        if category:
-            category = data.category_translation.get(category, category)
         items.append(
             {
                 "order_item_id": row["order_item_id"],
