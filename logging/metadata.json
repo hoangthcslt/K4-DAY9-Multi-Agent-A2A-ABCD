@@ -3,14 +3,14 @@
   "parameter_size": "8B",
   "framework": "groq-python-sdk",
   "runtime": {
-    "total_duration_s": 612.27,
+    "total_duration_s": 570.01,
     "cases_processed": 50,
-    "avg_case_duration_s": 12.25
+    "avg_case_duration_s": 11.4
   },
   "llm_stats": {
     "model": "llama-3.1-8b-instant",
-    "total_calls": 199,
-    "total_tokens": 54966
+    "total_calls": 198,
+    "total_tokens": 54928
   },
-  "timestamp": "2026-08-05T16:35:03.463518"
+  "timestamp": "2026-08-05T17:20:24.409569"
 }

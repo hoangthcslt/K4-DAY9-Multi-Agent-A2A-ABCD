@@ -25,7 +25,9 @@ class PaymentAgent:
         ))
 
         if len(items) == 0:
-            item_total = freight_total = expected_total = difference = reconciled = None
+            item_total = 0.0
+            freight_total = 0.0
+            expected_total = difference = reconciled = None
         else:
             item_total = round(sum(i.get("price", 0) for i in items), 2)
             freight_total = round(sum(i.get("freight_value", 0) for i in items), 2)

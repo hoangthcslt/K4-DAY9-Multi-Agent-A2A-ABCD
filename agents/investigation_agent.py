@@ -63,10 +63,8 @@ class InvestigationAgent:
                 if product:
                     products_detail.append(product)
                     cat_pt = product.get("product_category_name")
-                    cat_en = self.dal.get_category_english(cat_pt) if cat_pt else None
-                    cat_name = cat_en if cat_en else cat_pt
-                    if cat_name and cat_name not in category_names:
-                        category_names.append(cat_name)
+                    if cat_pt and cat_pt not in category_names:
+                        category_names.append(cat_pt)
 
             if sid and sid not in seller_ids:
                 seller_ids.append(sid)

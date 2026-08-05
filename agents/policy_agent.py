@@ -124,7 +124,7 @@ class PolicyAgent:
         elif primary_issue in ("late_delivery_logistics",):
             actions.append("review_carrier_delay")
 
-        if case_status == "action_required":
+        if main_action == "issue_full_refund":
             actions.append("verify_refund_completion")
 
         if flags.get("multi_seller_order"):
