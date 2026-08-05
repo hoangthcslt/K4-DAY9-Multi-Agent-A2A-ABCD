@@ -1,0 +1,62 @@
+{
+  "case_id": "EC_033",
+  "case_assessment": {
+    "primary_issue": "unsupported_late_claim",
+    "secondary_issues": [],
+    "case_status": "no_action",
+    "confidence": 1.0
+  },
+  "affected_entities": {
+    "order_ids": [
+      "EC_033"
+    ],
+    "item_ids": [],
+    "seller_ids": [],
+    "payment_ids": [
+      "edefc0fa09c98cc491e9d2cf95ee4a5f:1"
+    ]
+  },
+  "customer_context": {
+    "customer_unique_id": "f019bdb8008924769fe88319cddedda9",
+    "related_order_ids": [
+      "b345a3528956237e1d8907b94d5e5829"
+    ]
+  },
+  "product_context": {
+    "product_ids": [],
+    "category_names": []
+  },
+  "delivery_analysis": {
+    "delivered_at": null,
+    "estimated_delivery_at": "2017-03-10 00:00:00",
+    "carrier_handoff_at": null,
+    "delivery_variance_hours": null,
+    "seller_handoff_analysis": [],
+    "late_handoff_seller_ids": []
+  },
+  "payment_reconciliation": {
+    "currency": "BRL",
+    "item_total_brl": 0.0,
+    "freight_total_brl": 0.0,
+    "expected_total_brl": 0.0,
+    "payment_total_brl": 0.0,
+    "difference_brl": 0.0,
+    "reconciled": false,
+    "payment_types": [
+      "credit_card"
+    ]
+  },
+  "root_cause_analysis": {
+    "ranked_causes": [],
+    "responsible_parties": []
+  },
+  "evidence_ids": [
+    "order:EC_033",
+    "payment:edefc0fa09c98cc491e9d2cf95ee4a5f:1"
+  ],
+  "financial_resolution": {
+    "currency": "BRL",
+    "recommended_refund_brl": 0.0
+  },
+  "resolution_actions": []
+}
