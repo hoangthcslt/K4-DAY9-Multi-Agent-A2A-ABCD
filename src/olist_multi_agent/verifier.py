@@ -198,6 +198,17 @@ def verify_candidate(
                 f"payment:{payment_id}", indexes
             ):
                 errors.append(f"affected payment_id does not exist: {payment_id}")
+        if expected_order_id is not None:
+            source_payments = sorted(
+                indexes.payments_by_order.get(expected_order_id, []),
+                key=lambda row: int(row.get("payment_sequential", "0") or 0),
+            )
+            expected_payment_ids = [
+                f"{expected_order_id}:{row['payment_sequential']}"
+                for row in source_payments
+            ][:5]
+            if entities.get("payment_ids") != expected_payment_ids:
+                errors.append("payment_ids must follow payment_sequential order")
 
     product = candidate.get("product_context", {})
     if indexes is not None and isinstance(product, dict):
@@ -207,5 +218,28 @@ def verify_candidate(
             if not isinstance(product_id, str)
             or product_id not in indexes.products_by_id
         )
+        source_categories = {
+            row.get("product_category_name")
+            for row in indexes.products_by_id.values()
+            if row.get("product_category_name")
+        }
+        errors.extend(
+            f"category_name does not exist in products CSV: {category_name}"
+            for category_name in product.get("category_names", [])
+            if not isinstance(category_name, str) or category_name not in source_categories
+        )
+
+    if indexes is not None and expected_order_id is not None:
+        payment_reconciliation = candidate.get("payment_reconciliation", {})
+        if isinstance(payment_reconciliation, dict) and not indexes.items_by_order.get(
+            expected_order_id, []
+        ):
+            if payment_reconciliation.get("item_total_brl") != 0.0:
+                errors.append("item_total_brl must be 0.0 when order has no items")
+            if payment_reconciliation.get("freight_total_brl") != 0.0:
+                errors.append("freight_total_brl must be 0.0 when order has no items")
+            for field in ("expected_total_brl", "difference_brl", "reconciled"):
+                if payment_reconciliation.get(field) is not None:
+                    errors.append(f"{field} must be null when order has no items")
 
     return VerificationResult(valid=not errors, errors=errors, candidate=candidate)

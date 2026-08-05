@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from ..contracts import AgentHandoff, CaseContext
-from ..facts import translated_category, unique_stable
+from ..facts import unique_stable
 from .base import BaseAgent
 
 
@@ -25,25 +25,20 @@ class OrderProductAgent(BaseAgent):
                 )
                 for row in items
             )
-            category_names = unique_stable(
-                value
-                for value in (
-                    translated_category(raw, self.indexes.category_translation_by_name)
-                    for raw in raw_categories
-                )
-                if value
-            )
             raw_categories = [value for value in raw_categories if value]
             facts = {
                 "order_status": order["order_status"],
                 "item_ids": item_ids[:5],
                 "seller_ids": seller_ids[:3],
                 "product_ids": product_ids[:5],
-                "category_names": category_names[:5],
+                # Keep the canonical category value from the products CSV.
+                # The translation table is auxiliary and the output contract
+                # does not ask agents to replace source values.
+                "category_names": raw_categories[:5],
                 "item_count": len(items),
                 "seller_count": len(seller_ids),
                 "product_count": len(product_ids),
-                "category_count": len(category_names),
+                "category_count": len(raw_categories),
                 "multi_item_order": len(items) >= 2,
                 "multi_seller_order": len(seller_ids) >= 2,
                 "multiple_categories": len(raw_categories) >= 2,

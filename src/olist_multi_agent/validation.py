@@ -19,9 +19,19 @@ def validate_output_dir(
 ) -> list[str]:
     errors: list[str] = []
     files = sorted(output_dir.glob("EC_*.json"))
+    expected_names = {f"EC_{index:03d}.json" for index in range(1, expected_count + 1)}
+    actual_names = {path.name for path in files}
+    missing_names = sorted(expected_names - actual_names)
+    extra_names = sorted(actual_names - expected_names)
+    if missing_names:
+        errors.append(f"missing output files: {', '.join(missing_names)}")
+    if extra_names:
+        errors.append(f"unexpected output files: {', '.join(extra_names)}")
     if len(files) != expected_count:
         errors.append(f"expected {expected_count} JSON files, found {len(files)}")
     for path in files:
+        if path.name not in expected_names:
+            continue
         try:
             payload = json.loads(path.read_text(encoding="utf-8"))
         except (OSError, json.JSONDecodeError) as exc:

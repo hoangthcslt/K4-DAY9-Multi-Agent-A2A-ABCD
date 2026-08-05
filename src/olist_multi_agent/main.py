@@ -29,6 +29,12 @@ async def run_scaffold(settings: Settings) -> None:
     coordinator = CoordinatorAgent(settings, indexes, llm)
     trace = TraceWriter(settings.trace_path)
     trace.reset()
+    # A submission must contain exactly the current input set. Remove only
+    # generated case files so a previous run cannot leave stale EC_*.json
+    # artifacts that trigger the grader's hard gate.
+    settings.output_dir.mkdir(parents=True, exist_ok=True)
+    for stale_output in settings.output_dir.glob("EC_*.json"):
+        stale_output.unlink()
     run_id = datetime.now(UTC).isoformat()
     settings.metadata_path.parent.mkdir(parents=True, exist_ok=True)
     settings.metadata_path.write_text(

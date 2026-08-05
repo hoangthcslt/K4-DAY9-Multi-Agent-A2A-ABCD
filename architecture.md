@@ -132,7 +132,7 @@ category_translation_by_name[product_category_name]
 Các index phải bảo toàn thứ tự dòng nguồn để các array output ổn định. Khi thiếu dữ liệu:
 
 - order không tồn tại: case lỗi input, không được tạo evidence giả;
-- order không có item: `item_total_brl`, `expected_total_brl`, `difference_brl` và `reconciled` là `null`;
+- order không có item: `item_total_brl` và `freight_total_brl` là `0.0`; `expected_total_brl`, `difference_brl` và `reconciled` là `null`;
 - payment vẫn được tổng hợp độc lập kể cả khi order không có item;
 - timestamp thiếu: giữ `null`, không tự nội suy.
 

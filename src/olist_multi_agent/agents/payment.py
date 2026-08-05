@@ -13,13 +13,19 @@ class PaymentAgent(BaseAgent):
     async def run(self, context: CaseContext) -> AgentHandoff:
         case_id = context.case.case_id
         order_id = context.case.claimed_order_id
-        payments = self.indexes.payments_by_order.get(order_id, [])
+        payments = sorted(
+            self.indexes.payments_by_order.get(order_id, []),
+            key=lambda row: int(row.get("payment_sequential", "0") or 0),
+        )
         items = self.indexes.items_by_order.get(order_id, [])
         payment_ids = [f"{order_id}:{row['payment_sequential']}" for row in payments]
         payment_total = sum((decimal(row.get("payment_value")) for row in payments), decimal())
         payment_types = unique_stable(row.get("payment_type", "") for row in payments if row.get("payment_type"))
 
-        item_total = freight_total = expected_total = difference = None
+        # Empty item sums are represented as zero; only the derived
+        # reconciliation fields are undefined when no item row exists.
+        item_total = freight_total = 0.0
+        expected_total = difference = None
         reconciled = None
         if items:
             item_total_decimal = sum((decimal(row.get("price")) for row in items), decimal())
