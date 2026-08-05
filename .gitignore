@@ -13,9 +13,8 @@ __pycache__/
 dist/
 build/
 
-# Generated submission/runtime artifacts.
-output/*.json
-*.zip
+# Runtime logs remain ignored; submission output is intentionally tracked so
+# branch-based graders can see the 50 JSON files and output.zip.
 logging/trace.jsonl
 logging/metadata.json
 

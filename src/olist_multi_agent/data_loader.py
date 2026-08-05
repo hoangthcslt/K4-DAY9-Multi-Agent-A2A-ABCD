@@ -46,12 +46,16 @@ class OlistIndexes:
         orders_by_id = {row["order_id"]: row for row in orders}
         customers_by_id = {row["customer_id"]: row for row in customers}
         customer_rows_by_unique_id = _group(customers, "customer_unique_id")
+        customer_unique_by_id = {
+            row["customer_id"]: row["customer_unique_id"] for row in customers
+        }
         customer_order_ids_by_unique_id: dict[str, list[str]] = {}
-        for row in customers:
-            order_id = row["customer_id"]
-            customer_order_ids_by_unique_id.setdefault(row["customer_unique_id"], []).append(
-                order_id
-            )
+        for row in orders:
+            customer_unique_id = customer_unique_by_id.get(row["customer_id"])
+            if customer_unique_id:
+                customer_order_ids_by_unique_id.setdefault(customer_unique_id, []).append(
+                    row["order_id"]
+                )
 
         return cls(
             orders_by_id=orders_by_id,

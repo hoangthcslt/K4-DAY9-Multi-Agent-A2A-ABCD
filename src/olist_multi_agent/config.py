@@ -12,6 +12,18 @@ from pathlib import Path
 from dotenv import load_dotenv
 
 
+GROQ_MODEL = "llama-3.1-8b-instant"
+MODEL_NAMES = {
+    "coordinator": GROQ_MODEL,
+    "customer": GROQ_MODEL,
+    "order_product": GROQ_MODEL,
+    "payment": GROQ_MODEL,
+    "delivery": GROQ_MODEL,
+    "policy": GROQ_MODEL,
+    "verifier": GROQ_MODEL,
+}
+
+
 def _as_bool(value: str | None, default: bool = False) -> bool:
     if value is None:
         return default
@@ -88,15 +100,9 @@ class Settings:
             trace_path=path_env("TRACE_PATH", "logging/trace.jsonl"),
             metadata_path=path_env("METADATA_PATH", "logging/metadata.json"),
             max_agent_retries=_as_int(os.getenv("MAX_AGENT_RETRIES"), 1),
-            models={
-                "coordinator": os.getenv("MODEL_COORDINATOR", "Qwen/Qwen2.5-7B-Instruct"),
-                "customer": os.getenv("MODEL_CUSTOMER", "Qwen/Qwen2.5-3B-Instruct"),
-                "order_product": os.getenv("MODEL_ORDER_PRODUCT", "Qwen/Qwen2.5-7B-Instruct"),
-                "payment": os.getenv("MODEL_PAYMENT", "Phi-4-mini"),
-                "delivery": os.getenv("MODEL_DELIVERY", "Qwen/Qwen2.5-7B-Instruct"),
-                "policy": os.getenv("MODEL_POLICY", "deepseek-ai/DeepSeek-R1-Distill-Qwen-7B"),
-                "verifier": os.getenv("MODEL_VERIFIER", "Qwen/Qwen2.5-7B-Instruct"),
-            },
+            # Model IDs are source-controlled to satisfy the lab contract; .env
+            # contains provider credentials and runtime tuning only.
+            models=dict(MODEL_NAMES),
         )
 
     def api_key(self) -> str:

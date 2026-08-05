@@ -162,9 +162,50 @@ def verify_candidate(
 
     customer = candidate.get("customer_context", {})
     if isinstance(customer, dict):
+        customer_unique_id = customer.get("customer_unique_id")
+        if indexes is not None and customer_unique_id is not None:
+            if customer_unique_id not in indexes.customer_rows_by_unique_id:
+                errors.append("customer_unique_id does not exist in customers")
         related = customer.get("related_order_ids", [])
         order_ids = entities.get("order_ids", [])
-        if isinstance(related, list) and any(order_id in order_ids for order_id in related):
-            errors.append("related_order_ids must exclude the affected order")
+        if not isinstance(related, list):
+            errors.append("related_order_ids must be an array")
+        else:
+            if any(order_id in order_ids for order_id in related):
+                errors.append("related_order_ids must exclude the affected order")
+            if indexes is not None:
+                errors.extend(
+                    f"related_order_id does not exist: {order_id}"
+                    for order_id in related
+                    if not isinstance(order_id, str)
+                    or order_id not in indexes.orders_by_id
+                )
+
+    if indexes is not None and isinstance(entities, dict):
+        for order_id in entities.get("order_ids", []):
+            if not isinstance(order_id, str) or order_id not in indexes.orders_by_id:
+                errors.append(f"affected order_id does not exist: {order_id}")
+        for seller_id in entities.get("seller_ids", []):
+            if not isinstance(seller_id, str) or seller_id not in indexes.sellers_by_id:
+                errors.append(f"affected seller_id does not exist: {seller_id}")
+        for item_id in entities.get("item_ids", []):
+            if not isinstance(item_id, str) or not _valid_source_evidence(
+                f"item:{item_id}", indexes
+            ):
+                errors.append(f"affected item_id does not exist: {item_id}")
+        for payment_id in entities.get("payment_ids", []):
+            if not isinstance(payment_id, str) or not _valid_source_evidence(
+                f"payment:{payment_id}", indexes
+            ):
+                errors.append(f"affected payment_id does not exist: {payment_id}")
+
+    product = candidate.get("product_context", {})
+    if indexes is not None and isinstance(product, dict):
+        errors.extend(
+            f"product_id does not exist: {product_id}"
+            for product_id in product.get("product_ids", [])
+            if not isinstance(product_id, str)
+            or product_id not in indexes.products_by_id
+        )
 
     return VerificationResult(valid=not errors, errors=errors, candidate=candidate)
