@@ -1,0 +1,47 @@
+{
+  "run_id": "2026-08-05T08:56:52.164213+00:00",
+  "framework": "custom-python-modular-monolith",
+  "runtime": "python-3.11.9",
+  "provider": "groq",
+  "llm_enabled": true,
+  "llm_required": true,
+  "llm_min_interval_seconds": 2.5,
+  "expected_llm_calls": 350,
+  "parameter_limit": "<=10B per logical agent",
+  "model_parameters_b": {
+    "coordinator": 8,
+    "customer": 8,
+    "order_product": 8,
+    "payment": 8,
+    "delivery": 8,
+    "policy": 8,
+    "verifier": 8
+  },
+  "models": {
+    "coordinator": "llama-3.1-8b-instant",
+    "customer": "llama-3.1-8b-instant",
+    "order_product": "llama-3.1-8b-instant",
+    "payment": "llama-3.1-8b-instant",
+    "delivery": "llama-3.1-8b-instant",
+    "policy": "llama-3.1-8b-instant",
+    "verifier": "llama-3.1-8b-instant"
+  },
+  "row_counts": {
+    "orders": 99441,
+    "customers": 99441,
+    "items": 112650,
+    "payments": 103886,
+    "products": 32951,
+    "sellers": 3095,
+    "translations": 71
+  },
+  "agents": [
+    "coordinator",
+    "customer",
+    "order_product",
+    "payment",
+    "delivery",
+    "policy",
+    "verifier"
+  ]
+}
