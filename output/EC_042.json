@@ -35,7 +35,9 @@
     "product_ids": [
       "9388e84da6051e85eb86fc653c3aa64f"
     ],
-    "category_names": []
+    "category_names": [
+      "cama_mesa_banho"
+    ]
   },
   "delivery_analysis": {
     "delivered_at": "2017-09-29 11:40:16",
@@ -72,10 +74,6 @@
       {
         "cause_code": "SELLER_HANDOFF_AFTER_LIMIT",
         "rank": 1
-      },
-      {
-        "cause_code": "CARRIER_DELIVERED_AFTER_ESTIMATE",
-        "rank": 2
       }
     ],
     "responsible_parties": [
@@ -92,8 +90,7 @@
     "payment:0c65eb5a1415db7a20dfc869c9277e7a:2",
     "payment:0c65eb5a1415db7a20dfc869c9277e7a:3",
     "seller:cce6ab8d1682639fe45ab70234f1665f",
-    "policy:SELLER_HANDOFF_AFTER_LIMIT",
-    "policy:CARRIER_DELIVERED_AFTER_ESTIMATE"
+    "policy:SELLER_HANDOFF_AFTER_LIMIT"
   ],
   "financial_resolution": {
     "currency": "BRL",

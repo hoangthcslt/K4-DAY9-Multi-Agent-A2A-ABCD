@@ -36,7 +36,9 @@
       "a0b7d5a992ccda646f2d34e418fff5a0",
       "188d0b148e6d1c86faffe0d73c3f2dad"
     ],
-    "category_names": []
+    "category_names": [
+      "moveis_decoracao"
+    ]
   },
   "delivery_analysis": {
     "delivered_at": "2018-03-27 16:42:16",
@@ -94,6 +96,7 @@
     "recommended_refund_brl": 0.0
   },
   "resolution_actions": [
-    "explain_valid_split_payment"
+    "explain_valid_split_payment",
+    "coordinate_multi_seller_case"
   ]
 }

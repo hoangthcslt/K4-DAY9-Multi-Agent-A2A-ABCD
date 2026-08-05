@@ -36,7 +36,9 @@
       "81fa3a54b696e8510a2f5cd69b29337d",
       "e0d64dcfaa3b6db5c54ca298ae101d05"
     ],
-    "category_names": []
+    "category_names": [
+      "relogios_presentes"
+    ]
   },
   "delivery_analysis": {
     "delivered_at": "2018-08-30 12:03:15",
@@ -93,6 +95,7 @@
     "recommended_refund_brl": 0.0
   },
   "resolution_actions": [
-    "explain_valid_split_payment"
+    "explain_valid_split_payment",
+    "coordinate_multi_seller_case"
   ]
 }

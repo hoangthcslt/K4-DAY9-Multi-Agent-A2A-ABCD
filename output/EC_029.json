@@ -40,7 +40,10 @@
       "b7605b5b483063d12bd90a772bff9d21",
       "8adde8ed66e628e94f29b9832156ab08"
     ],
-    "category_names": []
+    "category_names": [
+      "cama_mesa_banho",
+      "moveis_decoracao"
+    ]
   },
   "delivery_analysis": {
     "delivered_at": "2017-12-14 20:22:50",
@@ -98,6 +101,7 @@
     "recommended_refund_brl": 0.0
   },
   "resolution_actions": [
-    "explain_valid_split_payment"
+    "explain_valid_split_payment",
+    "coordinate_multi_seller_case"
   ]
 }

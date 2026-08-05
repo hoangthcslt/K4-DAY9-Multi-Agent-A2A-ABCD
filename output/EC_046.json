@@ -33,7 +33,9 @@
     "product_ids": [
       "c857b96593773e940454e76efa8eabb3"
     ],
-    "category_names": []
+    "category_names": [
+      "moveis_decoracao"
+    ]
   },
   "delivery_analysis": {
     "delivered_at": "2017-06-08 05:47:38",
@@ -70,10 +72,6 @@
       {
         "cause_code": "SELLER_HANDOFF_AFTER_LIMIT",
         "rank": 1
-      },
-      {
-        "cause_code": "CARRIER_DELIVERED_AFTER_ESTIMATE",
-        "rank": 2
       }
     ],
     "responsible_parties": [
@@ -90,8 +88,7 @@
     "payment:0e3ec3c17b64c6cc7bc01bba21e7afdf:1",
     "payment:0e3ec3c17b64c6cc7bc01bba21e7afdf:2",
     "seller:cca3071e3e9bb7d12640c9fbe2301306",
-    "policy:SELLER_HANDOFF_AFTER_LIMIT",
-    "policy:CARRIER_DELIVERED_AFTER_ESTIMATE"
+    "policy:SELLER_HANDOFF_AFTER_LIMIT"
   ],
   "financial_resolution": {
     "currency": "BRL",

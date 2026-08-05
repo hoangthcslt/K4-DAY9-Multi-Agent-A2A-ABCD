@@ -35,7 +35,9 @@
     "product_ids": [
       "3eef0cb94ba82de806bb30ab743c7655"
     ],
-    "category_names": []
+    "category_names": [
+      "moveis_escritorio"
+    ]
   },
   "delivery_analysis": {
     "delivered_at": "2018-03-17 18:45:30",
@@ -71,10 +73,6 @@
       {
         "cause_code": "SELLER_HANDOFF_AFTER_LIMIT",
         "rank": 1
-      },
-      {
-        "cause_code": "CARRIER_DELIVERED_AFTER_ESTIMATE",
-        "rank": 2
       }
     ],
     "responsible_parties": [
@@ -91,8 +89,7 @@
     "item:4f3f48cbedce0c316c688af6fc7e9c56:3",
     "payment:4f3f48cbedce0c316c688af6fc7e9c56:1",
     "seller:7c67e1448b00f6e969d365cea6b010ab",
-    "policy:SELLER_HANDOFF_AFTER_LIMIT",
-    "policy:CARRIER_DELIVERED_AFTER_ESTIMATE"
+    "policy:SELLER_HANDOFF_AFTER_LIMIT"
   ],
   "financial_resolution": {
     "currency": "BRL",

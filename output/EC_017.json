@@ -35,7 +35,9 @@
     "product_ids": [
       "4439198baadf8e8dcb009f990091179e"
     ],
-    "category_names": []
+    "category_names": [
+      "brinquedos"
+    ]
   },
   "delivery_analysis": {
     "delivered_at": "2018-04-11 19:56:32",

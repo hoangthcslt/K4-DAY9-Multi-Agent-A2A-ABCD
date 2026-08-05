@@ -34,7 +34,9 @@
       "01bc2a3c12d6e588aecb54ffad194c13",
       "ce066f4a83649651549d717c9b566816"
     ],
-    "category_names": []
+    "category_names": [
+      "esporte_lazer"
+    ]
   },
   "delivery_analysis": {
     "delivered_at": "2017-12-11 19:17:19",
@@ -71,10 +73,6 @@
       {
         "cause_code": "SELLER_HANDOFF_AFTER_LIMIT",
         "rank": 1
-      },
-      {
-        "cause_code": "CARRIER_DELIVERED_AFTER_ESTIMATE",
-        "rank": 2
       }
     ],
     "responsible_parties": [
@@ -91,8 +89,7 @@
     "payment:97e8d3eb8f48e3610beed991e5f32296:1",
     "payment:97e8d3eb8f48e3610beed991e5f32296:2",
     "seller:4d6d651bd7684af3fffabd5f08d12e5a",
-    "policy:SELLER_HANDOFF_AFTER_LIMIT",
-    "policy:CARRIER_DELIVERED_AFTER_ESTIMATE"
+    "policy:SELLER_HANDOFF_AFTER_LIMIT"
   ],
   "financial_resolution": {
     "currency": "BRL",

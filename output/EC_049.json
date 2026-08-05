@@ -39,7 +39,9 @@
       "b09790edda54333116f9cf1decc580a1",
       "8b45810da2ef9860496d56f62435fc40"
     ],
-    "category_names": []
+    "category_names": [
+      "cama_mesa_banho"
+    ]
   },
   "delivery_analysis": {
     "delivered_at": "2017-11-01 16:19:42",
@@ -104,6 +106,7 @@
     "recommended_refund_brl": 0.0
   },
   "resolution_actions": [
-    "explain_valid_split_payment"
+    "explain_valid_split_payment",
+    "coordinate_multi_seller_case"
   ]
 }

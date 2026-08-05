@@ -34,7 +34,9 @@
     "product_ids": [
       "c4baedd846ed09b85f78a781b522f126"
     ],
-    "category_names": []
+    "category_names": [
+      "ferramentas_jardim"
+    ]
   },
   "delivery_analysis": {
     "delivered_at": "2018-02-05 19:53:16",

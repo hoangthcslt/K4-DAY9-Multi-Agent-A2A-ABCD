@@ -35,7 +35,9 @@
     "product_ids": [
       "727a46f0b58a9ef165af9f7ebcfebfa9"
     ],
-    "category_names": []
+    "category_names": [
+      "esporte_lazer"
+    ]
   },
   "delivery_analysis": {
     "delivered_at": "2018-03-31 11:58:26",

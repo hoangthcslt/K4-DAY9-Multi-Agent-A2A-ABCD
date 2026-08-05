@@ -34,7 +34,9 @@
     "product_ids": [
       "c3a52053718435a35e070b991ff546ec"
     ],
-    "category_names": []
+    "category_names": [
+      "utilidades_domesticas"
+    ]
   },
   "delivery_analysis": {
     "delivered_at": null,

@@ -31,7 +31,9 @@
     "product_ids": [
       "dc2410804cf782c5d87dbcd201b74e9b"
     ],
-    "category_names": []
+    "category_names": [
+      "informatica_acessorios"
+    ]
   },
   "delivery_analysis": {
     "delivered_at": null,

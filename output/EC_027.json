@@ -34,7 +34,9 @@
     "product_ids": [
       "6c712952b8ef62f8d06a0314917400c8"
     ],
-    "category_names": []
+    "category_names": [
+      "beleza_saude"
+    ]
   },
   "delivery_analysis": {
     "delivered_at": "2018-04-19 18:48:29",

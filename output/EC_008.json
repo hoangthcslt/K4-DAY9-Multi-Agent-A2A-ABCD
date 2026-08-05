@@ -36,7 +36,9 @@
       "6ab41d7f15e7af9d6c7cd912055acc1a",
       "c1c1d3afbe6a5ab7a534f7ea20e09b8e"
     ],
-    "category_names": []
+    "category_names": [
+      "esporte_lazer"
+    ]
   },
   "delivery_analysis": {
     "delivered_at": "2018-05-21 22:16:02",
@@ -94,6 +96,7 @@
     "recommended_refund_brl": 0.0
   },
   "resolution_actions": [
-    "explain_valid_split_payment"
+    "explain_valid_split_payment",
+    "coordinate_multi_seller_case"
   ]
 }

@@ -140,7 +140,7 @@ class OrderProductAgent:
 
         for item in sorted_items:
             pid = str(item.get("product_id") or "")
-            cat = str(item.get("product_category_name_english") or "")
+            cat = str(item.get("product_category_name") or "")
             sid = str(item.get("seller_id") or "")
             iid = item.get("order_item_id")
             item_ids.append(f"{order_id}:{int(iid)}" if iid else f"{order_id}:?")
@@ -178,7 +178,7 @@ class PaymentAgent:
 
         if not raw_items:
             return {
-                "item_total_brl": None, "freight_total_brl": None,
+                "item_total_brl": 0.0, "freight_total_brl": 0.0,
                 "expected_total_brl": None, "payment_total_brl": payment_total,
                 "difference_brl": None, "reconciled": None,
                 "payment_types": payment_types, "payment_ids": payment_ids
@@ -314,7 +314,7 @@ class PolicyAgent:
             responsible_parties = [{"party_type": "seller", "party_id": s} for s in late_sellers[:3]]
             refund_brl = _round2(freight_total)
             action = "refund_freight"
-            cause_codes = ["SELLER_HANDOFF_AFTER_LIMIT", "CARRIER_DELIVERED_AFTER_ESTIMATE"]
+            cause_codes = ["SELLER_HANDOFF_AFTER_LIMIT"]
 
         elif delivery_var is not None and delivery_var > 0 and len(late_sellers) == 0:
             primary_issue = "late_delivery_logistics"
@@ -360,7 +360,7 @@ class PolicyAgent:
         # verify_refund_completion: only for full platform refunds (canceled/unavailable)
         if action == "issue_full_refund":
             resolution_actions.append("verify_refund_completion")
-        if len(unique_sellers) >= 2 and primary_issue not in ("valid_split_payment",):
+        if len(unique_sellers) >= 2:
             resolution_actions.append("coordinate_multi_seller_case")
         if num_payments >= 2 and primary_issue not in ("valid_split_payment",):
             resolution_actions.append("verify_payment_allocation")

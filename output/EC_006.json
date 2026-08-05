@@ -36,7 +36,9 @@
     "product_ids": [
       "ad4b5def91ac7c575dbdf65b5be311f4"
     ],
-    "category_names": []
+    "category_names": [
+      "informatica_acessorios"
+    ]
   },
   "delivery_analysis": {
     "delivered_at": "2018-03-21 21:28:39",
@@ -72,10 +74,6 @@
       {
         "cause_code": "SELLER_HANDOFF_AFTER_LIMIT",
         "rank": 1
-      },
-      {
-        "cause_code": "CARRIER_DELIVERED_AFTER_ESTIMATE",
-        "rank": 2
       }
     ],
     "responsible_parties": [
@@ -93,8 +91,7 @@
     "item:0e4a4de1d15b6df8d4335fb2db61667a:4",
     "payment:0e4a4de1d15b6df8d4335fb2db61667a:1",
     "seller:897060da8b9a21f655304d50fd935913",
-    "policy:SELLER_HANDOFF_AFTER_LIMIT",
-    "policy:CARRIER_DELIVERED_AFTER_ESTIMATE"
+    "policy:SELLER_HANDOFF_AFTER_LIMIT"
   ],
   "financial_resolution": {
     "currency": "BRL",

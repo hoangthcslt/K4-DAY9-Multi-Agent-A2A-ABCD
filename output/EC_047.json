@@ -32,7 +32,9 @@
     "product_ids": [
       "6bd248f93425ceeb625a8a97e2404112"
     ],
-    "category_names": []
+    "category_names": [
+      "papelaria"
+    ]
   },
   "delivery_analysis": {
     "delivered_at": null,
