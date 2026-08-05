@@ -5,7 +5,7 @@
 | Thông tin       | Nội dung                  |
 | --------------- | ------------------------- |
 | Họ và tên       | Nguyễn Đình Hoàng         |
-| MSSV            | 01436                     |
+| MSSV            | 2A202601436                     |
 | Khóa/Lớp        | K4                        |
 | Vai trò chính   | Agent Developer & Architect|
 | Ngày hoàn thành | 2026-08-05                |
