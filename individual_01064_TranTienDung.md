@@ -115,15 +115,26 @@ print(call_llm('You are a test agent. Reply with JSON only.',
 
 ## 7. Hiểu biết về luồng end-to-end
 
-> Lưu ý: 5 câu hỏi gốc trong template (Crossref, vector index, freshness monitoring, baseline/corrupted/repaired...) thuộc về một lab khác (RAG/data-quality), không khớp với lab Multi-Agent E-commerce Dispute Resolution này. Tôi thay bằng 5 câu hỏi tương đương đúng với pipeline thực tế của lab này.
+Giải thích ngắn gọn bằng lời của tôi:
 
-**Câu hỏi tương đương và trả lời:**
+1. **Dữ liệu đi từ Crossref đến vector index như thế nào?**
+   Dự án Multi-Agent E-commerce Dispute Resolution không dùng Crossref hay vector index — đây không phải bài toán retrieval/RAG, nên không có bước này trong pipeline của tôi. Luồng dữ liệu thật của lab này là: `input/EC_xxx.json` cho `claimed_order_id` → `DataLoader` join 9 CSV Olist (orders/customers/order_items/order_payments/products) theo `order_id`/`customer_id`/`product_id`/`seller_id` → `policy_rules.apply_policy()` tính toàn bộ số liệu/điều kiện deterministic → mỗi domain agent gọi 1 lần LLM cross-check trên facts đó → Verifier Agent enforce limit + kiểm tra business rule → ghi `output/EC_xxx.json` + `logging/trace.jsonl`.
 
-1. **Dữ liệu đi từ input JSON đến output JSON như thế nào?** `input/EC_xxx.json` cho `claimed_order_id` → `DataLoader` join 9 CSV Olist (orders/customers/order_items/order_payments/products) theo `order_id`/`customer_id`/`product_id`/`seller_id` → `policy_rules.apply_policy()` tính toàn bộ số liệu/điều kiện deterministic → mỗi domain agent gọi 1 lần LLM cross-check trên facts đó → Policy Agent tổng hợp confidence → Verifier Agent enforce limit + kiểm tra business rule → ghi `output/EC_xxx.json` + `logging/trace.jsonl`.
-2. **"Ground truth" ở lab này là gì và dùng để đo cái gì?** Không có tập nhãn riêng — "ground truth" chính là bảng rule `EC_POLICY_V2` trong README, được implement lại độc lập trong `audit_outputs.py` (không tái sử dụng code của `verifier_agent.py`) để tái tạo giá trị kỳ vọng thẳng từ CSV và so khớp với `output/`.
-3. **Quality check ở lab này khác gì so với "freshness monitoring"?** Dữ liệu Olist tĩnh (không có khái niệm dữ liệu "cũ/mới"), nên không có freshness check. Quality check ở đây gồm: (a) Verifier Agent — schema/array-cap/evidence tại thời điểm chạy; (b) `audit_outputs.py` — tái tính độc lập từ CSV sau khi đã có `output/`; (c) LLM cross-check ở Policy Agent — tín hiệu agree/disagree phản ánh vào `confidence`, không phải kiểm tra độ mới của dữ liệu.
-4. **Vì sao phải dùng cùng 50 input case khi so sánh trước/sau refactor?** Để phép so sánh "output trước khi thêm LLM thật" và "output sau khi thêm LLM thật" là hợp lệ — nếu đổi tập input giữa hai lần chạy thì không thể kết luận khác biệt là do refactor hay do input khác.
-5. **Refactor được xem là thành công dựa trên artifact/metric nào?** (a) `git diff --stat -- output/` không cho thấy thay đổi khi chạy ở chế độ fallback (chứng minh logic chấm điểm không đổi); (b) `audit_outputs.py` báo `Problems: 0` khi so khớp `output/` với giá trị tái tính từ CSV; (c) `logging/trace.jsonl` có đủ `a2a_message`/`agent_step` cho cả 6 agent mỗi case, chứng minh handoff thực sự xảy ra.
+2. **Evaluation set và ground-truth document IDs dùng để đo retrieval/answer quality ra sao?**
+   Lab này không có evaluation set hay ground-truth document ID vì không phải bài toán retrieval. "Ground truth" gần nhất là bảng rule `EC_POLICY_V2` trong README: tôi implement lại độc lập trong `audit_outputs.py` (không tái sử dụng code của `verifier_agent.py`) để tái tạo giá trị kỳ vọng thẳng từ CSV và so khớp với `output/` — đóng vai trò tương đương "đo lại bằng ground truth" nhưng cho bài toán rule-based, không phải Hit Rate/MRR.
+
+3. **Quality checks khác freshness monitoring ở điểm nào trong bài lab?**
+   Dữ liệu Olist tĩnh (không có khái niệm dữ liệu "cũ/mới" theo thời gian thực), nên lab này không có freshness monitoring. Quality check ở đây gồm: (a) Verifier Agent — schema/array-cap/evidence tại thời điểm chạy; (b) `audit_outputs.py` — tái tính độc lập từ CSV sau khi đã có `output/`; (c) LLM cross-check ở Policy Agent — tín hiệu agree/disagree phản ánh vào `confidence`. Cả ba đều kiểm tra tính đúng đắn của một lần chạy cố định, không kiểm tra độ mới của dữ liệu theo thời gian.
+
+4. **Vì sao phải dùng cùng test set cho baseline, corrupted và repaired?**
+   Lab này không có khái niệm baseline/corrupted/repaired dataset theo nghĩa RAG. Nguyên tắc tương đương tôi áp dụng: phải dùng đúng cùng 50 input case (`EC_001`–`EC_050`) khi so sánh output "trước khi thêm LLM thật" và "sau khi thêm LLM thật" — nếu đổi tập input giữa hai lần chạy thì không thể kết luận khác biệt quan sát được là do thay đổi kiến trúc hay do input khác, giống lý do phải giữ nguyên test set khi so sánh baseline/corrupted/repaired.
+
+5. **Repair được xem là thành công dựa trên artifact và metric nào?**
+   Lab này không có bước "repair" dữ liệu. Tương đương gần nhất là việc refactor kiến trúc (thêm LLM reasoning thật) được tôi coi là thành công dựa trên: (a) `git diff --stat -- output/` không cho thấy thay đổi khi chạy ở chế độ fallback (chứng minh logic chấm điểm không đổi); (b) `audit_outputs.py` báo `Problems: 0` khi so khớp `output/` với giá trị tái tính từ CSV; (c) `logging/trace.jsonl` có đủ `a2a_message`/`agent_step` cho cả 6 agent mỗi case, chứng minh handoff thực sự xảy ra.
+
+**Câu trả lời:**
+
+Xem 5 mục trả lời trực tiếp bên trên, theo đúng 5 câu hỏi gốc của template.
 
 ## 8. Cam kết của thành viên
 
