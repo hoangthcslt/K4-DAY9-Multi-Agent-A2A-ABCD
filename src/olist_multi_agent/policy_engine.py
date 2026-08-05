@@ -29,6 +29,46 @@ def _facts(handoffs: dict[str, AgentHandoff], agent: str) -> dict[str, Any]:
     return handoffs.get(agent, AgentHandoff(case_id="unknown", agent=agent)).facts
 
 
+def _confidence(
+    *,
+    matched_cleanly: bool,
+    primary: str,
+    delivery: dict[str, Any],
+    payment: dict[str, Any],
+    handoffs: dict[str, AgentHandoff],
+) -> float:
+    """Calibrate confidence from real uncertainty signals instead of a fixed value.
+
+    A rule that only ever reports 1.0 is indistinguishable from a model that
+    never checks its own inputs. This lowers confidence when the case fell
+    through to the unmatched fallback, when the decisive variance sits close
+    to its threshold, when timestamps needed for the decision are missing, or
+    when an upstream agent already raised a warning.
+    """
+    score = 0.97
+
+    if not matched_cleanly:
+        score -= 0.35
+
+    if primary in ("late_delivery_seller", "late_delivery_logistics"):
+        variance = delivery.get("delivery_variance_hours")
+        if variance is None or abs(float(variance)) < 2.0:
+            score -= 0.10
+        if delivery.get("delivered_at") is None or delivery.get("carrier_handoff_at") is None:
+            score -= 0.10
+
+    if primary in ("valid_split_payment", "unsupported_late_claim"):
+        difference = payment.get("difference_brl")
+        if difference is not None and 0.05 <= abs(float(difference)) <= 0.10:
+            score -= 0.08
+
+    for handoff in handoffs.values():
+        if handoff.warnings:
+            score -= 0.05
+
+    return round(max(0.55, min(0.99, score)), 2)
+
+
 def resolve_policy(handoffs: dict[str, AgentHandoff]) -> PolicyDecision:
     """Apply the README priority order to normalized agent facts."""
     order = _facts(handoffs, "order_product")
@@ -44,6 +84,7 @@ def resolve_policy(handoffs: dict[str, AgentHandoff]) -> PolicyDecision:
     payment_count = int(payment.get("payment_count") or 0)
     delivery_variance = delivery.get("delivery_variance_hours")
 
+    matched_cleanly = True
     if status == "canceled" and payment_total > 0:
         primary = "canceled_order_paid"
         cause = "ORDER_CANCELED_AFTER_PAYMENT"
@@ -87,7 +128,9 @@ def resolve_policy(handoffs: dict[str, AgentHandoff]) -> PolicyDecision:
         primary_action = "reject_late_refund"
     else:
         # The supplied 50 cases are expected to match one of the rules above.
-        # Keep a safe no-refund result for an unforeseen/missing-data case.
+        # Keep a safe no-refund result for an unforeseen/missing-data case,
+        # but mark it as an unclean match so confidence reflects the guess.
+        matched_cleanly = False
         primary = "unsupported_late_claim"
         cause = "DELIVERY_WITHIN_ESTIMATE"
         refund = 0.0
@@ -118,11 +161,19 @@ def resolve_policy(handoffs: dict[str, AgentHandoff]) -> PolicyDecision:
     if payment.get("split_payment") and primary != "valid_split_payment":
         actions.append("verify_payment_allocation")
 
+    confidence = _confidence(
+        matched_cleanly=matched_cleanly,
+        primary=primary,
+        delivery=delivery,
+        payment=payment,
+        handoffs=handoffs,
+    )
+
     return PolicyDecision(
         primary_issue=primary,
         secondary_issues=secondary,
         case_status="action_required" if refund > 0 else "no_action",
-        confidence=1.0,
+        confidence=confidence,
         root_causes=[{"cause_code": cause, "rank": 1}],
         responsible_parties=responsible[:3],
         recommended_refund_brl=round(refund, 2),
