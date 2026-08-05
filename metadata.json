@@ -1,6 +1,6 @@
 {
   "model": "llama-3.1-8b-instant",
   "parameter_size": "8B",
-  "framework": "Pure Python + Pydantic (Groq API)",
+  "framework": "Python + Pydantic; Groq chat-completions API called once per domain agent (Customer, Order/Product, Payment, Delivery, Policy) for narrative judgement and cross-check; all graded numbers/categories are computed deterministically in src/policy_rules.py",
   "runtime": "Python 3.x"
 }

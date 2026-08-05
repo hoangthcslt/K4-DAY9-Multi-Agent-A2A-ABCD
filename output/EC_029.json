@@ -10,7 +10,7 @@
       "multiple_categories"
     ],
     "case_status": "no_action",
-    "confidence": 0.9
+    "confidence": 0.95
   },
   "affected_entities": {
     "order_ids": [

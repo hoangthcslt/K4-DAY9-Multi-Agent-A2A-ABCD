@@ -1,6 +1,5 @@
 import pandas as pd
 import os
-import math
 from typing import Dict, Any, List
 
 class DataLoader:
@@ -11,10 +10,6 @@ class DataLoader:
         self.order_items = pd.read_csv(os.path.join(data_dir, "olist_order_items_dataset.csv"))
         self.order_payments = pd.read_csv(os.path.join(data_dir, "olist_order_payments_dataset.csv"))
         self.products = pd.read_csv(os.path.join(data_dir, "olist_products_dataset.csv"))
-        
-        # Load category translation and merge (removed to keep original Portuguese name)
-        # We will just use the original product_category_name
-        pass
 
     def _clean_val(self, val):
         if pd.isna(val) or val is None:

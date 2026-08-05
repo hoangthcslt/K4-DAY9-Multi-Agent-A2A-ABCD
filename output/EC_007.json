@@ -8,7 +8,7 @@
       "multiple_categories"
     ],
     "case_status": "action_required",
-    "confidence": 0.9
+    "confidence": 0.95
   },
   "affected_entities": {
     "order_ids": [
