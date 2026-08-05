@@ -257,15 +257,9 @@ class DeliveryAgent:
 # ----------------- POLICY AGENT (pure Python rule engine per EC_POLICY_V2) -----------------
 
 class PolicyAgent:
-    """
-    Applies EC_POLICY_V2 deterministically.
-    Uses LLM (Groq) only to generate a confidence score + short reasoning, but
-    ALL structured fields (primary_issue, refund amounts, actions, cause codes) are
-    computed here in Python from verified data.
-    """
     def __init__(self):
+        self.model = "meta-llama/llama-3.1-8b-instruct"
         self.api_key = os.getenv("OPENROUTER_API_KEY")
-        self.model = "google/gemma-2-9b-it"
 
     def determine_resolution(
         self,
@@ -390,114 +384,160 @@ class PolicyAgent:
         """Use LLM to estimate confidence score based on evidence clarity."""
         if not self.api_key:
             return 0.9
-            
-        prompt = """You are a quality assurance agent. Given the policy decision summary, return a JSON object with a single key 'confidence' (float between 0.7 and 1.0) representing how confident you are in this determination. Output only valid JSON."""
-        user_msg = json.dumps({
-            "primary_issue": primary_issue,
-            "delivery_variance_hours": delivery_var,
-            "late_seller_count": len(late_sellers) if late_sellers else 0,
-            "payment_reconciled": reconciled,
-            "order_status": order_status
-        })
+
+        prompt = (
+            f"You are a policy agent checking an e-commerce claim.\n"
+            f"Primary Issue: {primary_issue}\n"
+            f"Delivery Variance (hours): {delivery_var}\n"
+            f"Late Sellers: {late_sellers}\n"
+            f"Payment Reconciled: {reconciled}\n"
+            f"Order Status: {order_status}\n"
+            "Evaluate how confident you are in this primary issue classification on a scale of 0.0 to 1.0.\n"
+            "Return ONLY a valid JSON object containing exactly one key 'confidence' with a float value. No markdown, no other text."
+        )
+
+        headers = {
+            "Authorization": f"Bearer {self.api_key}",
+            "Content-Type": "application/json"
+        }
+        payload = {
+            "model": self.model,
+            "messages": [
+                {"role": "system", "content": "You are a helpful assistant that outputs only valid JSON."},
+                {"role": "user", "content": prompt}
+            ],
+            "temperature": 0.0,
+            "response_format": {"type": "json_object"}
+        }
+
         try:
-            resp = requests.post(
-                "https://openrouter.ai/api/v1/chat/completions",
-                headers={
-                    "Authorization": f"Bearer {self.api_key}",
-                    "Content-Type": "application/json"
-                },
-                json={
-                    "model": self.model,
-                    "messages": [
-                        {"role": "system", "content": prompt},
-                        {"role": "user", "content": user_msg}
-                    ],
-                    "response_format": {"type": "json_object"},
-                    "temperature": 0.0
-                },
-                timeout=10
-            )
-            data = json.loads(resp.json()["choices"][0]["message"]["content"])
-            c = float(data.get("confidence", 0.9))
-            return round(max(0.0, min(1.0, c)), 2)
-        except Exception:
-            return 0.9
+            resp = requests.post("https://openrouter.ai/api/v1/chat/completions", headers=headers, json=payload, timeout=10)
+            if resp.status_code == 200:
+                data = resp.json()
+                content = data["choices"][0]["message"]["content"]
+                # Clean up any markdown blocks if the model ignored JSON mode
+                content = content.replace('```json', '').replace('```', '').strip()
+                parsed = json.loads(content)
+                c = float(parsed.get("confidence", 0.90))
+                return round(max(0.0, min(1.0, c)), 2)
+        except Exception as e:
+            print(f"PolicyAgent LLM failed: {e}")
+
+        return 0.90
 
 
 # ----------------- VERIFIER AGENT -----------------
 
 class VerifierAgent:
+    def __init__(self):
+        import os
+        self.model = "meta-llama/llama-3.1-8b-instruct"
+        self.api_key = os.getenv("OPENROUTER_API_KEY")
+
     def build_final(
         self,
         case_id: str,
         order_id: str,
         customer: CustomerContext,
-        order: Dict,
-        payment: Dict,
+        order: dict,
+        payment: dict,
         delivery: DeliveryAnalysis,
-        policy: Dict
+        policy: dict
     ) -> FinalResolution:
-
-        # Evidence IDs
+        # Build initial evidences
         evidences = [f"order:{order_id}"]
         for iid in order.get("item_ids", [])[:5]:
             evidences.append(f"item:{iid}")
         for pid in payment.get("payment_ids", [])[:5]:
             evidences.append(f"payment:{pid}")
-
-        # Only responsible sellers in evidence
+        
         rps = policy.get("responsible_parties", [])
-        seller_in_rps = set(rp["party_id"] for rp in rps if rp.get("party_type") == "seller")
+        seller_in_rps = [rp["party_id"] for rp in rps if rp.get("party_type") == "seller"]
         for sid in seller_in_rps:
             evidences.append(f"seller:{sid}")
-
+        
         for rc in policy.get("ranked_causes", []):
             evidences.append(f"policy:{rc['cause_code']}")
-
+            
         evidences = evidences[:20]
-
-        # Deduplicate seller_ids in affected_entities but preserve order
+        
         all_seller_ids = order.get("seller_ids", [])
         unique_seller_ids = list(dict.fromkeys(all_seller_ids))[:3]
-
-        return FinalResolution(
-            case_id=case_id,
-            case_assessment=CaseAssessment(
-                primary_issue=policy["primary_issue"],
-                secondary_issues=policy["secondary_issues"],
-                case_status=policy["case_status"],
-                confidence=policy["confidence"]
-            ),
-            affected_entities=AffectedEntities(
-                order_ids=[order_id][:5],
-                item_ids=order.get("item_ids", [])[:5],
-                seller_ids=unique_seller_ids,
-                payment_ids=payment.get("payment_ids", [])[:5]
-            ),
-            customer_context=customer,
-            product_context=ProductContext(
-                product_ids=order.get("product_ids", [])[:5],
-                category_names=order.get("category_names", [])[:5]
-            ),
-            delivery_analysis=delivery,
-            payment_reconciliation=PaymentReconciliation(
-                currency="BRL",
-                item_total_brl=payment.get("item_total_brl"),
-                freight_total_brl=payment.get("freight_total_brl"),
-                expected_total_brl=payment.get("expected_total_brl"),
-                payment_total_brl=payment.get("payment_total_brl"),
-                difference_brl=payment.get("difference_brl"),
-                reconciled=payment.get("reconciled"),
-                payment_types=payment.get("payment_types", [])
-            ),
-            root_cause_analysis=RootCauseAnalysis(
-                ranked_causes=[RankedCause(**rc) for rc in policy.get("ranked_causes", [])],
-                responsible_parties=[ResponsibleParty(**rp) for rp in rps[:3]]
-            ),
-            evidence_ids=evidences,
-            financial_resolution=FinancialResolution(
-                currency="BRL",
-                recommended_refund_brl=policy.get("refund_brl", 0.0)
-            ),
-            resolution_actions=policy.get("resolution_actions", [])[:5]
-        )
+        
+        draft_dict = {
+            "case_id": case_id,
+            "case_assessment": {
+                "primary_issue": policy["primary_issue"],
+                "secondary_issues": policy["secondary_issues"],
+                "case_status": policy["case_status"],
+                "confidence": policy["confidence"]
+            },
+            "affected_entities": {
+                "order_ids": [order_id],
+                "item_ids": order.get("item_ids", [])[:5],
+                "seller_ids": unique_seller_ids,
+                "payment_ids": payment.get("payment_ids", [])[:5]
+            },
+            "customer_context": {
+                "customer_unique_id": customer.customer_unique_id,
+                "related_order_ids": customer.related_order_ids[:5]
+            },
+            "product_context": {
+                "product_ids": order.get("product_ids", [])[:5],
+                "category_names": order.get("category_names", [])[:5]
+            },
+            "delivery_analysis": delivery.model_dump(),
+            "payment_reconciliation": {
+                "currency": payment.get("currency", "BRL"),
+                "item_total_brl": payment.get("item_total_brl"),
+                "freight_total_brl": payment.get("freight_total_brl"),
+                "expected_total_brl": payment.get("expected_total_brl"),
+                "payment_total_brl": payment.get("payment_total_brl"),
+                "difference_brl": payment.get("difference_brl"),
+                "reconciled": payment.get("reconciled"),
+                "payment_types": payment.get("payment_types", [])
+            },
+            "root_cause_analysis": {
+                "ranked_causes": policy.get("ranked_causes", []),
+                "responsible_parties": policy.get("responsible_parties", [])
+            },
+            "evidence_ids": evidences,
+            "financial_resolution": {
+                "currency": "BRL",
+                "recommended_refund_brl": policy.get("refund_brl", 0.0)
+            },
+            "resolution_actions": policy.get("resolution_actions", [])[:5]
+        }
+        
+        if self.api_key:
+            import requests, json
+            prompt = (
+                f"You are VerifierAgent. Review this draft JSON for strict schema compliance.\n"
+                f"Arrays max limits: items (5), sellers (3), payments (5), related_orders (5), products (5), categories (5), root_causes (3), responsible_parties (3), evidence (20), actions (5).\n"
+                f"Draft JSON: {json.dumps(draft_dict)}\n"
+                f"Return ONLY the validated and corrected JSON object exactly matching the schema. No markdown, no other text."
+            )
+            headers = {
+                "Authorization": f"Bearer {self.api_key}",
+                "Content-Type": "application/json"
+            }
+            payload = {
+                "model": self.model,
+                "messages": [
+                    {"role": "system", "content": "You are a JSON verifier. Output only valid JSON."},
+                    {"role": "user", "content": prompt}
+                ],
+                "temperature": 0.0,
+                "response_format": {"type": "json_object"}
+            }
+            try:
+                resp = requests.post("https://openrouter.ai/api/v1/chat/completions", headers=headers, json=payload, timeout=20)
+                if resp.status_code == 200:
+                    content = resp.json()["choices"][0]["message"]["content"]
+                    content = content.replace('```json', '').replace('```', '').strip()
+                    llm_json = json.loads(content)
+                    return FinalResolution(**llm_json)
+            except Exception as e:
+                print(f"VerifierAgent LLM failed: {e}")
+                
+        return FinalResolution(**draft_dict)
