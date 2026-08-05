@@ -34,9 +34,7 @@
     "product_ids": [
       "c3a52053718435a35e070b991ff546ec"
     ],
-    "category_names": [
-      "housewares"
-    ]
+    "category_names": []
   },
   "delivery_analysis": {
     "delivered_at": null,

@@ -31,9 +31,7 @@
     "product_ids": [
       "f6dc856631040b5a7843b14a94b09b96"
     ],
-    "category_names": [
-      "pet_shop"
-    ]
+    "category_names": []
   },
   "delivery_analysis": {
     "delivered_at": null,

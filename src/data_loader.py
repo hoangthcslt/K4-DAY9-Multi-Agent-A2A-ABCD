@@ -12,12 +12,9 @@ class DataLoader:
         self.order_payments = pd.read_csv(os.path.join(data_dir, "olist_order_payments_dataset.csv"))
         self.products = pd.read_csv(os.path.join(data_dir, "olist_products_dataset.csv"))
         
-        # Load category translation and merge
-        try:
-            self.category_translation = pd.read_csv(os.path.join(data_dir, "product_category_name_translation.csv"))
-            self.products = self.products.merge(self.category_translation, on='product_category_name', how='left')
-        except FileNotFoundError:
-            self.products['product_category_name_english'] = self.products['product_category_name']
+        # Load category translation and merge (removed to keep original Portuguese name)
+        # We will just use the original product_category_name
+        pass
 
     def _clean_val(self, val):
         if pd.isna(val) or val is None:
@@ -66,7 +63,7 @@ class DataLoader:
                 "price": float(self._clean_val(row['price'])) if self._clean_val(row['price']) is not None else None,
                 "freight_value": float(self._clean_val(row['freight_value'])) if self._clean_val(row['freight_value']) is not None else None,
                 "shipping_limit_date": self._clean_val(row['shipping_limit_date']),
-                "product_category_name_english": self._clean_val(row.get('product_category_name_english', None))
+                "product_category_name": self._clean_val(row.get('product_category_name', None))
             })
         return result
 

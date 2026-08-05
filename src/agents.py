@@ -286,7 +286,7 @@ class PolicyAgent:
         late_sellers = delivery.late_handoff_seller_ids
         num_items = len(raw_items)
         unique_sellers = list(dict.fromkeys(str(i.get("seller_id","")) for i in raw_items if i.get("seller_id")))
-        unique_categories = list(dict.fromkeys(str(i.get("product_category_name_english","")) for i in raw_items if i.get("product_category_name_english")))
+        unique_categories = list(dict.fromkeys(str(i.get("product_category_name","")) for i in raw_items if i.get("product_category_name")))
 
         # ---- Apply EC_POLICY_V2 priority order ----
         primary_issue = None
