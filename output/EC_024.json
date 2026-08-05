@@ -3,8 +3,7 @@
   "case_assessment": {
     "primary_issue": "canceled_order_paid",
     "secondary_issues": [
-      "multi_item_order",
-      "repeat_customer"
+      "multi_item_order"
     ],
     "case_status": "action_required",
     "confidence": 1.0
@@ -26,9 +25,7 @@
   },
   "customer_context": {
     "customer_unique_id": "0f75924cbbe60142068f4029d744b724",
-    "related_order_ids": [
-      "0d07d0a588caf93cc66b7a8aff86d2fe"
-    ]
+    "related_order_ids": []
   },
   "product_context": {
     "product_ids": [

@@ -5,8 +5,7 @@
     "secondary_issues": [
       "multi_item_order",
       "multi_seller_order",
-      "split_payment",
-      "repeat_customer"
+      "split_payment"
     ],
     "case_status": "no_action",
     "confidence": 1.0
@@ -30,9 +29,7 @@
   },
   "customer_context": {
     "customer_unique_id": "26a2b0baec2ef2e226f1297de4b6a86f",
-    "related_order_ids": [
-      "144d6b2679193370edcdceae5c0a407b"
-    ]
+    "related_order_ids": []
   },
   "product_context": {
     "product_ids": [

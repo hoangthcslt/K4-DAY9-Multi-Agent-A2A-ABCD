@@ -5,7 +5,6 @@
     "secondary_issues": [
       "multi_item_order",
       "multi_seller_order",
-      "repeat_customer",
       "multiple_categories"
     ],
     "case_status": "no_action",
@@ -29,9 +28,7 @@
   },
   "customer_context": {
     "customer_unique_id": "e13173fd16b572985c50742546978614",
-    "related_order_ids": [
-      "30cd9604d86792fe87c3b31912998520"
-    ]
+    "related_order_ids": []
   },
   "product_context": {
     "product_ids": [

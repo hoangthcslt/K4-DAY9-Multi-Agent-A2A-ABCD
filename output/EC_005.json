@@ -4,8 +4,7 @@
     "primary_issue": "late_delivery_logistics",
     "secondary_issues": [
       "multi_item_order",
-      "multi_seller_order",
-      "repeat_customer"
+      "multi_seller_order"
     ],
     "case_status": "action_required",
     "confidence": 1.0
@@ -28,9 +27,7 @@
   },
   "customer_context": {
     "customer_unique_id": "e779db0c222c66daea0527e24c4a05e1",
-    "related_order_ids": [
-      "9fa6244400a4503b42cde3c30b3d268e"
-    ]
+    "related_order_ids": []
   },
   "product_context": {
     "product_ids": [
