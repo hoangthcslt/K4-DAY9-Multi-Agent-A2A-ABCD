@@ -91,7 +91,7 @@
   ],
   "financial_resolution": {
     "currency": "BRL",
-    "recommended_refund_brl": 0
+    "recommended_refund_brl": 0.0
   },
   "resolution_actions": [
     "reject_late_refund",

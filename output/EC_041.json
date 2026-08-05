@@ -8,7 +8,7 @@
       "split_payment"
     ],
     "case_status": "no_action",
-    "confidence": 0.85
+    "confidence": 0.8
   },
   "affected_entities": {
     "order_ids": [
@@ -93,7 +93,7 @@
   ],
   "financial_resolution": {
     "currency": "BRL",
-    "recommended_refund_brl": 0
+    "recommended_refund_brl": 0.0
   },
   "resolution_actions": [
     "explain_valid_split_payment",

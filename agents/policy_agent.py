@@ -186,7 +186,7 @@ class PolicyAgent:
                 "responsible_parties": responsible_parties,
             },
             "evidence_ids": evidence_ids,
-            "recommended_refund_brl": round(recommended_refund, 2),
+            "recommended_refund_brl": round(float(recommended_refund), 2),
             "resolution_actions": actions[:5],
         }
 

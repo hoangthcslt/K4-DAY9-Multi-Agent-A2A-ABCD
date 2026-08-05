@@ -41,13 +41,15 @@ class DataAccessLayer:
         return {k: (None if pd.isna(v) else v) for k, v in row.items()}
 
     def get_order_items(self, order_id: str) -> list[dict]:
-        """Get all item rows for an order."""
+        """Get all item rows for an order, sorted by order_item_id (stable order per spec)."""
         rows = self.order_items[self.order_items["order_id"] == order_id]
+        rows = rows.sort_values("order_item_id")
         return self._to_clean_list(rows)
 
     def get_payments(self, order_id: str) -> list[dict]:
-        """Get all payment rows for an order."""
+        """Get all payment rows for an order, sorted by payment_sequential (stable order per spec)."""
         rows = self.payments[self.payments["order_id"] == order_id]
+        rows = rows.sort_values("payment_sequential")
         return self._to_clean_list(rows)
 
     # ── Customer lookups ──
