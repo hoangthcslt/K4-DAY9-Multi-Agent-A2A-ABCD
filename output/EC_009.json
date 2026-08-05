@@ -49,30 +49,6 @@
         "shipping_limit_at": "2017-05-09 01:15:17",
         "handoff_variance_hours": null,
         "late_handoff": false
-      },
-      {
-        "seller_id": "4e8dacf3d38f281ae26c3e0321d92d88",
-        "shipping_limit_at": "2017-05-09 01:15:17",
-        "handoff_variance_hours": null,
-        "late_handoff": false
-      },
-      {
-        "seller_id": "4e8dacf3d38f281ae26c3e0321d92d88",
-        "shipping_limit_at": "2017-05-09 01:15:17",
-        "handoff_variance_hours": null,
-        "late_handoff": false
-      },
-      {
-        "seller_id": "4e8dacf3d38f281ae26c3e0321d92d88",
-        "shipping_limit_at": "2017-05-09 01:15:17",
-        "handoff_variance_hours": null,
-        "late_handoff": false
-      },
-      {
-        "seller_id": "4e8dacf3d38f281ae26c3e0321d92d88",
-        "shipping_limit_at": "2017-05-09 01:15:17",
-        "handoff_variance_hours": null,
-        "late_handoff": false
       }
     ],
     "late_handoff_seller_ids": []

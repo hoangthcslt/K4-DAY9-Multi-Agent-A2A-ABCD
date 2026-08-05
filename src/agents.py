@@ -210,35 +210,32 @@ class DeliveryAgent:
 
         delivery_variance = _diff_hours(d_delivered, d_estimated)
 
-        # Per-seller handoff: use earliest shipping_limit_date per seller
+        # Per-seller: use earliest shipping_limit_date for each unique seller
         seller_limits: Dict[str, datetime] = {}
-        for item in raw_items:
-            sid = str(item.get("seller_id") or "")
-            sld = _parse_dt(item.get("shipping_limit_date"))
-            if sid and sld:
-                if sid not in seller_limits or sld < seller_limits[sid]:
-                    seller_limits[sid] = sld
-
-        seller_handoff_analysis = []
-        late_seller_ids = []
-
+        seller_limit_str: Dict[str, str] = {}
         for item in raw_items:
             sid = str(item.get("seller_id") or "")
             sld_str = item.get("shipping_limit_date")
             sld = _parse_dt(sld_str)
+            if sid and sld:
+                if sid not in seller_limits or sld < seller_limits[sid]:
+                    seller_limits[sid] = sld
+                    seller_limit_str[sid] = str(sld_str)
 
-            # Use the earliest shipping_limit_date for this seller
-            effective_limit = seller_limits.get(sid)
+        seller_handoff_analysis = []
+        late_seller_ids = []
+
+        # One entry per UNIQUE seller (not per item)
+        for sid, effective_limit in seller_limits.items():
             handoff_var = _diff_hours(d_carrier, effective_limit)
             is_late = handoff_var is not None and handoff_var > 0
-
             seller_handoff_analysis.append(SellerHandoff(
                 seller_id=sid,
-                shipping_limit_at=str(sld_str) if sld_str else None,
+                shipping_limit_at=seller_limit_str.get(sid),
                 handoff_variance_hours=handoff_var,
                 late_handoff=is_late
             ))
-            if is_late and sid not in late_seller_ids:
+            if is_late:
                 late_seller_ids.append(sid)
 
         return DeliveryAnalysis(

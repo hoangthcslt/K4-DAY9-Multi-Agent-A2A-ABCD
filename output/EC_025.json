@@ -49,12 +49,6 @@
         "shipping_limit_at": "2017-10-10 18:28:22",
         "handoff_variance_hours": -21.07,
         "late_handoff": false
-      },
-      {
-        "seller_id": "1f50f920176fa81dab994f9023523100",
-        "shipping_limit_at": "2017-10-10 18:28:22",
-        "handoff_variance_hours": -21.07,
-        "late_handoff": false
       }
     ],
     "late_handoff_seller_ids": []
